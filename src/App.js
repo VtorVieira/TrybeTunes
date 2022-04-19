@@ -9,11 +9,13 @@ import ProfileEdit from './pages/ProfileEdit';
 import NotFound from './pages/NotFound';
 
 const NUMBER_LOGIN = 3;
+const NUMBER_SEARCH = 2;
 
 class App extends React.Component {
   constructor() {
     super();
-    this.onValidName = this.onValidName.bind(this);
+    this.onValidNameLogin = this.onValidNameLogin.bind(this);
+    this.onValidNameSearch = this.onValidNameSearch.bind(this);
     this.pegaAPI = this.pegaAPI.bind(this);
 
     this.state = {
@@ -23,8 +25,21 @@ class App extends React.Component {
     };
   }
 
-  onValidName({ target }) {
+  onValidNameLogin({ target }) {
     if (target.value.length >= NUMBER_LOGIN) {
+      this.setState({
+        name: target.value,
+        isValid: false,
+      });
+    } else {
+      this.setState({
+        isValid: true,
+      });
+    }
+  }
+
+  onValidNameSearch({ target }) {
+    if (target.value.length >= NUMBER_SEARCH) {
       this.setState({
         name: target.value,
         isValid: false,
@@ -51,14 +66,21 @@ class App extends React.Component {
           path="/"
           render={ (props) => (<Login
             { ...props }
-            validName={ this.onValidName }
+            validName={ this.onValidNameLogin }
             isValid={ isValid }
             name={ name }
             loading={ loading }
             pegaAPI={ this.pegaAPI }
           />) }
         />
-        <Route path="/search" component={ Search } />
+        <Route
+          path="/search"
+          render={ (props) => (<Search
+            { ...props }
+            isValid={ isValid }
+            validNameSearch={ this.onValidNameSearch }
+          />) }
+        />
         <Route path="/album/:id" component={ Album } />
         <Route path="/favorites" component={ Favorites } />
         <Route exact path="/profile" component={ Profile } />
