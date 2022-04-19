@@ -9,13 +9,12 @@ import ProfileEdit from './pages/ProfileEdit';
 import NotFound from './pages/NotFound';
 
 const NUMBER_LOGIN = 3;
-const NUMBER_SEARCH = 2;
 
 class App extends React.Component {
   constructor() {
     super();
+
     this.onValidNameLogin = this.onValidNameLogin.bind(this);
-    this.onValidNameSearch = this.onValidNameSearch.bind(this);
     this.pegaAPI = this.pegaAPI.bind(this);
 
     this.state = {
@@ -27,19 +26,6 @@ class App extends React.Component {
 
   onValidNameLogin({ target }) {
     if (target.value.length >= NUMBER_LOGIN) {
-      this.setState({
-        name: target.value,
-        isValid: false,
-      });
-    } else {
-      this.setState({
-        isValid: true,
-      });
-    }
-  }
-
-  onValidNameSearch({ target }) {
-    if (target.value.length >= NUMBER_SEARCH) {
       this.setState({
         name: target.value,
         isValid: false,
@@ -77,11 +63,8 @@ class App extends React.Component {
           path="/search"
           render={ (props) => (<Search
             { ...props }
-            isValid={ isValid }
-            name={ name }
             loading={ loading }
             pegaAPI={ this.pegaAPI }
-            validNameSearch={ this.onValidNameSearch }
           />) }
         />
         <Route path="/album/:id" component={ Album } />
