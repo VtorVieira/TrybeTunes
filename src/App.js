@@ -78,6 +78,9 @@ class App extends React.Component {
           render={ (props) => (<Search
             { ...props }
             isValid={ isValid }
+            name={ name }
+            loading={ loading }
+            pegaAPI={ this.pegaAPI }
             validNameSearch={ this.onValidNameSearch }
           />) }
         />
