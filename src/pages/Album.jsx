@@ -16,11 +16,9 @@ export default class Album extends Component {
   async componentDidMount() {
     const { match: { params: { id } } } = this.props;
     const retonoAPI = await getMusics(id);
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift
-    const firstObj = retonoAPI.shift();
     this.setState({
-      trackList: retonoAPI,
-      newTrackList: firstObj,
+      trackList: retonoAPI.filter((e) => e.kind === 'song'),
+      newTrackList: retonoAPI[0],
     });
   }
 
@@ -42,7 +40,6 @@ export default class Album extends Component {
             previewUrl={ trackMusic.previewUrl }
             trackId={ trackMusic.trackId }
           />
-
           )) }
         </div>
       </div>);
