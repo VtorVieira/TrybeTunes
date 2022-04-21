@@ -24,7 +24,8 @@ export default class MusicCard extends Component {
   };
 
   render() {
-    const { trackName, previewUrl, trackId } = this.props;
+    const { trackName, previewUrl, trackObj, favorites } = this.props;
+    const isFavorite = favorites.some((fav) => fav.trackId === trackObj.trackId);
     const { loadingFav, favorite } = this.state;
     return (
       <div>
@@ -36,10 +37,10 @@ export default class MusicCard extends Component {
           <track kind="captions" />
         </audio>
         <input
-          data-testid={ `checkbox-music-${trackId}` }
+          data-testid={ `checkbox-music-${trackObj.trackId}` }
           type="checkbox"
-          checked={ favorite }
-          onChange={ () => this.addChecked(trackId) }
+          checked={ (!isFavorite) ? favorite : isFavorite }
+          onChange={ () => this.addChecked(trackObj) }
         />
       </div>
     );
@@ -47,7 +48,8 @@ export default class MusicCard extends Component {
 }
 
 MusicCard.propTypes = {
-  trackId: PropTypes.number.isRequired,
+  trackObj: PropTypes.number.isRequired,
+  favorites: PropTypes.number.isRequired,
   trackName: PropTypes.string.isRequired,
   previewUrl: PropTypes.string.isRequired,
 };

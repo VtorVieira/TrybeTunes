@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 export default class Album extends Component {
   constructor() {
@@ -10,6 +11,7 @@ export default class Album extends Component {
     this.state = {
       trackList: [],
       newTrackList: '',
+      favorites: [],
     };
   }
 
@@ -20,10 +22,14 @@ export default class Album extends Component {
       trackList: retonoAPI.filter((e) => e.kind === 'song'),
       newTrackList: retonoAPI[0],
     });
+    const retornoGet = await getFavoriteSongs();
+    this.setState({
+      favorites: retornoGet,
+    });
   }
 
   render() {
-    const { trackList, newTrackList } = this.state;
+    const { trackList, newTrackList, favorites } = this.state;
     return (
       <div data-testid="page-album">
         <Header />
@@ -38,7 +44,8 @@ export default class Album extends Component {
             key={ index }
             trackName={ trackMusic.trackName }
             previewUrl={ trackMusic.previewUrl }
-            trackId={ trackMusic.trackId }
+            trackObj={ trackMusic }
+            favorites={ favorites }
           />
           )) }
         </div>
