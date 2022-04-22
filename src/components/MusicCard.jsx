@@ -1,55 +1,83 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { addSong } from '../services/favoriteSongsAPI';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
 import Carregando from '../pages/Carregando';
 
 export default class MusicCard extends Component {
   constructor() {
     super();
     this.state = {
-      favorite: '',
-      loadingFav: false,
+      favorite: false,
+      loading: false,
     };
   }
 
-  addChecked = async (id) => {
+  componentDidMount() {
+    const { favorites, trackId } = this.props;
     this.setState({
-      loadingFav: true,
+      favorite: favorites.some((fav) => fav.trackId === trackId),
     });
-    const retonoAPI = await addSong(id);
+  }
+
+  addChecked = ({ target }) => {
     this.setState({
-      favorite: retonoAPI,
-      loadingFav: false,
+      favorite: target.checked,
+    }, async () => {
+      const { favorite } = this.state;
+
+      if (favorite === true) {
+        this.setState({
+          loading: true,
+        });
+        const { trackObj } = this.props;
+        await addSong(trackObj);
+        this.setState({
+          loading: false,
+        });
+      } else {
+        this.setState({
+          loading: true,
+        });
+        const { trackObj } = this.props;
+        await removeSong(trackObj);
+        this.setState({
+          loading: false,
+        });
+      }
     });
   };
 
   render() {
-    const { trackName, previewUrl, trackObj, favorites } = this.props;
-    const isFavorite = favorites.some((fav) => fav.trackId === trackObj.trackId);
-    const { loadingFav, favorite } = this.state;
+    const { trackName, previewUrl, trackId } = this.props;
+    const { loading, favorite } = this.state;
     return (
       <div>
-        { loadingFav && <Carregando /> }
-        <p>
-          { trackName }
-        </p>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
-          <track kind="captions" />
-        </audio>
-        <input
-          data-testid={ `checkbox-music-${trackObj.trackId}` }
-          type="checkbox"
-          checked={ (!isFavorite) ? favorite : isFavorite }
-          onChange={ () => this.addChecked(trackObj) }
-        />
+        {
+          loading ? (<Carregando />)
+            : (
+              <div>
+                <h4>{ trackName }</h4>
+                <audio data-testid="audio-component" src={ previewUrl } controls>
+                  <track kind="captions" />
+                  <code>audio</code>
+                </audio>
+                <input
+                  type="checkbox"
+                  onChange={ this.addChecked }
+                  data-testid={ `checkbox-music-${trackId}` }
+                  checked={ favorite }
+                />
+              </div>
+            )
+        }
       </div>
     );
   }
 }
-
 MusicCard.propTypes = {
-  trackObj: PropTypes.number.isRequired,
-  favorites: PropTypes.number.isRequired,
   trackName: PropTypes.string.isRequired,
+  trackId: PropTypes.number.isRequired,
   previewUrl: PropTypes.string.isRequired,
+  favorites: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  trackObj: PropTypes.objectOf(PropTypes.shape).isRequired,
 };
