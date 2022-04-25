@@ -38,11 +38,19 @@ export default class MusicCard extends Component {
         this.setState({
           loading: true,
         });
-        const { trackObj } = this.props;
-        await removeSong(trackObj);
-        this.setState({
-          loading: false,
-        });
+        const { trackObj, returnFavorites } = this.props;
+        if (returnFavorites === undefined) {
+          await removeSong(trackObj);
+          this.setState({
+            loading: false,
+          });
+        } else {
+          await removeSong(trackObj);
+          this.setState({
+            loading: false,
+          });
+          returnFavorites();
+        }
       }
     });
   };
@@ -61,12 +69,16 @@ export default class MusicCard extends Component {
                   <track kind="captions" />
                   <code>audio</code>
                 </audio>
-                <input
-                  type="checkbox"
-                  onChange={ this.addChecked }
-                  data-testid={ `checkbox-music-${trackId}` }
-                  checked={ favorite }
-                />
+                <label htmlFor={ trackId }>
+                  Favorita
+                  <input
+                    type="checkbox"
+                    onChange={ this.addChecked }
+                    data-testid={ `checkbox-music-${trackId}` }
+                    checked={ favorite }
+                    id={ trackId }
+                  />
+                </label>
               </div>
             )
         }
@@ -78,6 +90,7 @@ MusicCard.propTypes = {
   trackName: PropTypes.string.isRequired,
   trackId: PropTypes.number.isRequired,
   previewUrl: PropTypes.string.isRequired,
+  returnFavorites: PropTypes.func.isRequired,
   favorites: PropTypes.arrayOf(PropTypes.shape).isRequired,
   trackObj: PropTypes.objectOf(PropTypes.shape).isRequired,
 };
