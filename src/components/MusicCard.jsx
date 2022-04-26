@@ -13,43 +13,43 @@ export default class MusicCard extends Component {
   }
 
   componentDidMount() {
-    const { favorites, trackId } = this.props;
+    const { favorites, trackId } = this.props; // recebido como props a lista de favoritos
     this.setState({
-      favorite: favorites.some((fav) => fav.trackId === trackId),
+      favorite: favorites.some((fav) => fav.trackId === trackId), // utilizada a hof que retorna true se houver uma musica na lista
     });
   }
 
-  addChecked = ({ target }) => {
+  addChecked = ({ target }) => { // destruturado o evento do click para diminuir o codigo
     this.setState({
-      favorite: target.checked,
+      favorite: target.checked, // marca true or false a cada click
     }, async () => {
       const { favorite } = this.state;
 
-      if (favorite === true) {
+      if (favorite === true) { // se marcado como favorito
         this.setState({
-          loading: true,
+          loading: true, // add carregando
         });
-        const { trackObj } = this.props;
-        await addSong(trackObj);
+        const { trackObj } = this.props; // recebido como props todas as musicas em um obj
+        await addSong(trackObj); // add o obj clicado
         this.setState({
-          loading: false,
+          loading: false, // remove carregando
         });
       } else {
         this.setState({
-          loading: true,
+          loading: true, // add carregando
         });
-        const { trackObj, returnFavorites } = this.props;
-        if (returnFavorites === undefined) {
-          await removeSong(trackObj);
+        const { trackObj, returnFavorites } = this.props; // destruturando a funcao do componente Favorites
+        if (returnFavorites === undefined) { // valida se o retorno é undefined, pois album não tem essa funcao, só o favorites
+          await removeSong(trackObj); // remove o obj clicado
           this.setState({
-            loading: false,
+            loading: false, // remove carregando
           });
         } else {
-          await removeSong(trackObj);
+          await removeSong(trackObj); // remove o obj clicado
           this.setState({
-            loading: false,
+            loading: false, // remove carregando
           });
-          returnFavorites();
+          returnFavorites(); // executa a funcao criada no componente Favorites
         }
       }
     });

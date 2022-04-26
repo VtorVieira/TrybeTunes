@@ -17,29 +17,28 @@ export default class Album extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount() { // iniciando o component chamando as funcoes
     const { match: { params: { id } } } = this.props;
-    this.returnMusics(id);
-    this.returnFavorites();
+    this.returnMusics(id); // passando o parametro recebido da props do Router
+    this.returnFavorites(); // chamada da funcação para pegar as favoritas, esta no did, pois precisa chegar todas vez que entrar no componente
   }
 
   returnMusics = async (id) => {
-    const retonoAPI = await getMusics(id);
+    const retonoAPI = await getMusics(id); // pegando as musicas da API após a requisicao
     this.setState({
-      trackList: retonoAPI.filter((e) => e.kind === 'song'),
-      newTrackList: retonoAPI[0],
+      trackList: retonoAPI.filter((e) => e.kind === 'song'), // Filter para "cortar" o primeiro elmento
+      newTrackList: retonoAPI[0], // passando a posicao 0 para pegar apenas o primeiro elemento
     });
   };
 
   returnFavorites = async () => {
     this.setState({
-      loading: true,
+      loading: true, // add carregando
     });
-    const retornoGet = await getFavoriteSongs();
+    const retornoGet = await getFavoriteSongs(); // pegando as favoritas da API após a requisicao
     this.setState({
-      loading: false,
-      favorites: retornoGet,
-
+      loading: false, // remove carregando
+      favorites: retornoGet, // Gravando o retorno dentro do state favorites, que são as musicas favoritas
     });
   };
 
@@ -51,7 +50,6 @@ export default class Album extends Component {
         {
           loading ? (<Carregando />) : (
             <div data-testid="page-album">
-
               <h3 data-testid="artist-name">
                 { newTrackList.artistName }
               </h3>
